@@ -1,0 +1,901 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- On a phone's home screen it opens full screen, no browser bars (iPhone Safari can't go full screen from a page). -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1b1410">
+<title>Pick Up the Poo</title>
+<script>if (matchMedia('(pointer: coarse)').matches || new URLSearchParams(location.search).has('touch')) document.documentElement.classList.add('touch');</script>
+<style>:root{--bg:#1b1410;--fg:#f1e4d0;--muted:#b9a88f}body{background:var(--bg);color:var(--fg);margin:0;font:14px/1.4 system-ui,sans-serif}.stage{outline:none;width:min(100vw,150vh - 195px);margin:0 auto;position:relative;overflow:hidden}.stage img.room{width:100%;display:block}.sprite,.shadow{transform-origin:0 0;pointer-events:none;position:absolute;top:0;left:0}.sprite{visibility:hidden}.sprite.on{visibility:visible}.shadow{border-radius:50%}.shadow.soft{background:radial-gradient(closest-side,#1e0f056b,#1e0f0500)}.shadow.contact{background:radial-gradient(closest-side,#190c04b3,#190c0459 60%,#190c0400)}.noshadows .shadow{display:none}.fg{pointer-events:none;z-index:5000;position:absolute}.nofg .fg{display:none}.prop{pointer-events:none;z-index:1;position:absolute}.thing{pointer-events:none;position:absolute}body:not(.debug) .controls,body:not(.debug) .hint{display:none}.controls{color:var(--muted);flex-wrap:wrap;justify-content:center;gap:6px 18px;padding:8px 16px 0;display:flex}.controls label{align-items:center;gap:6px;display:flex}.hint{text-align:center;color:var(--muted);padding:4px 16px 10px}kbd{border:1px solid var(--muted);color:var(--fg);border-radius:4px;padding:0 4px}output{color:var(--fg);min-width:3ch}.stage{touch-action:none;-webkit-user-select:none;user-select:none}.say{z-index:6000;pointer-events:none;text-align:center;color:#fff4dc;text-shadow:0 0 3px #000,0 1px 2px #000;width:max-content;max-width:80%;font:600 clamp(11px,1.6vw,18px)/1.2 system-ui,sans-serif;transition:opacity .3s;position:absolute;bottom:4%;left:50%;transform:translate(-50%)}.controls button{font:inherit;padding:1px 8px}.say .who{color:#ffb3d1}.say .untyped{visibility:hidden}.say .act{color:#e8d8bc;font-style:italic;font-weight:400;display:block}.say.narration{color:#f1e4d0;font-style:italic;font-weight:500}.options{z-index:6000;box-sizing:border-box;background:#140c069e;border-radius:8px;flex-direction:column;gap:2px;width:max-content;max-width:84%;padding:8px 14px;display:flex;position:absolute;bottom:3%;left:50%;transform:translate(-50%)}.options:empty{display:none}.options button{all:unset;cursor:pointer;color:#e8d8bc;text-shadow:0 1px 2px #000;border-radius:4px;padding:1px 4px;font:600 clamp(12px,1.5vw,17px)/1.35 system-ui,sans-serif}.options button:hover,.options button:focus-visible{color:#fff4dc;background:#ffdca024}.options button.leave{color:#b9a88f;font-weight:500}.label{z-index:6000;pointer-events:none;color:#fff4dc;text-shadow:0 0 3px #000,0 1px 2px #000;font:600 clamp(11px,1.4vw,16px)/1.2 system-ui,sans-serif;position:absolute;top:3%;left:50%;transform:translate(-50%)}.stage.playing{cursor:pointer}.mute{z-index:6600;color:#fff4dc;cursor:pointer;background:#140c068c;border:1px solid #fff0c859;border-radius:14px;padding:5px 9px;font:600 13px/1 system-ui,sans-serif;position:absolute;top:1.6%;right:1.2%}.mute.sound{left:1.2%;right:auto}.mute.pause{left:calc(1.2% + 92px);right:auto}.paused-cover{z-index:99999;cursor:pointer;color:#fff4dc;-webkit-user-select:none;user-select:none;background:#0a06028c;flex-direction:column;justify-content:center;align-items:center;gap:10px;font-family:system-ui,sans-serif;display:flex;position:fixed;inset:0}.paused-word{letter-spacing:.06em;text-shadow:0 2px 8px #0009;font-size:42px;font-weight:800}.paused-hint{opacity:.85;font-size:15px}.mute.off{opacity:.7;text-decoration:line-through}.fade{z-index:5500;opacity:0;pointer-events:none;background:#000;position:absolute;inset:0}.leash{pointer-events:none;width:100%;height:100%;position:absolute;inset:0;overflow:visible}.card{z-index:7000;text-align:center;color:var(--fg);background:#140c06d1;place-content:center;gap:12px;padding:16px;font:600 clamp(14px,2vw,22px)/1.4 system-ui,sans-serif;display:grid;position:absolute;inset:0}.card button{font:inherit;justify-self:center;padding:4px 14px;font-size:16px}.play{color:var(--muted);flex-wrap:wrap;justify-content:center;align-items:center;gap:6px 10px;padding:8px 16px 0;display:none}.playing-page .play{display:flex}.play button{font:inherit;color:var(--fg);cursor:pointer;background:#2c2119;border:1px solid #6b5a45;border-radius:4px;padding:2px 10px}.play button.held{background:#7a5a2a;border-color:#e0b060}.play button.item:has(img){border-radius:8px;place-items:center;width:50px;height:50px;padding:2px;display:inline-grid}.play button.item img{object-fit:contain;pointer-events:none;width:44px;height:44px}.play button.item.held{box-shadow:0 0 0 2px #e0b060,0 0 12px #e0b06099}.play button.item.new{animation:1.6s ease-out got}@keyframes got{0%{transform:scale(.2);box-shadow:0 0 0 3px #ffd970,0 0 28px #ffd970}35%{transform:scale(1.35);box-shadow:0 0 0 3px #ffd970,0 0 28px #ffd970}55%{transform:scale(.92)}75%{transform:scale(1.06);box-shadow:0 0 0 2px #ffd970,0 0 16px #ffd970b3}to{box-shadow:none;transform:scale(1)}}.play .group{flex-wrap:wrap;align-items:center;gap:6px;display:flex}.stage.still .things img,.stage.still .things canvas{pointer-events:none;position:absolute}.stage.still img.front{pointer-events:none;width:100%;position:absolute;inset:0}.stage.still .things{position:absolute;inset:0}.stage.still>img.room,.stage.still>.things,.stage.still>img.front{transform-origin:62.5% 30%;transition:transform 1.4s ease-in-out}.stage.still.zoomed>img.room,.stage.still.zoomed>.things,.stage.still.zoomed>img.front{transform:scale(2.2)}.stage .fade-in{z-index:5500;pointer-events:none;background:#000;animation:.6s ease-out forwards fade-in;position:absolute;inset:0}@keyframes fade-in{to{opacity:0}}.stage.card-room{aspect-ratio:3/2;cursor:default;background:radial-gradient(at 50% 30%,#3a2a1c,#1b1410 75%)}.card-room .page{text-align:center;flex-direction:column;align-items:center;gap:14px;display:flex;position:absolute;inset:7% 9% 22%;overflow:auto}.card-room h2{color:#ffd9a0;letter-spacing:.02em;margin:0;font:700 clamp(20px,3vw,36px)/1.1 Georgia,Times New Roman,serif}.card-room .desc{color:#f1e4d0;max-width:46em;margin:0;font:italic 500 clamp(13px,1.55vw,19px)/1.45 Georgia,serif}.card-room .chips{flex-wrap:wrap;justify-content:center;gap:8px;display:flex}.card-room .chips button{color:#fff4dc;cursor:pointer;background:#3c2a1ae6;border:1px solid #8a6f4e;border-radius:16px;padding:6px 12px;font:600 clamp(12px,1.35vw,16px)/1.2 system-ui,sans-serif}.card-room .chips button:hover{background:#6b4c2a;border-color:#e0b060}.card-room .chips.ways button{color:#e8d8bc;background:0 0;border-style:dashed}.card-room .chips.ways button:before{content:"→ "}.card-room .page.busy{opacity:.45;pointer-events:none}.stage .fwoosh{z-index:5400;pointer-events:none;mix-blend-mode:screen;background:radial-gradient(at 70% 40%,#fff0b4f2,#ff8c1ebf 30%,#c8280059 60%,#0000 85%);animation:.9s ease-out forwards fwoosh;position:absolute;inset:0}@keyframes fwoosh{0%{opacity:0}12%{opacity:1}to{opacity:0}}.stage .to-black{z-index:5900;pointer-events:none;background:#000;animation:1.2s ease-in forwards to-black;position:absolute;inset:0}@keyframes to-black{0%{opacity:0}to{opacity:1}}.ways-out{z-index:6100;gap:6px;display:flex;position:absolute;bottom:3%;left:1.6%}.ways-out button{color:#fff4dc;cursor:pointer;background:#140c06b3;border:1px solid #fff0c873;border-radius:16px;padding:7px 12px;font:600 clamp(12px,1.3vw,15px)/1 system-ui,sans-serif}.ways-out button:hover{background:#5a3c1ee6}.mute.full{right:calc(1.2% + 86px)}.bug-card{z-index:7500;gap:10px;font-size:clamp(14px,1.6vw,18px)}.bug-card textarea{width:min(520px,80vw);color:var(--fg);background:#1b1410;border:1px solid #8a6f4e;border-radius:6px;padding:8px;font:15px/1.4 system-ui,sans-serif}.bug-card .bug-buttons{justify-content:center;gap:10px;display:flex}.bug-card .bug-status{color:var(--muted);min-height:1.2em;font-size:13px;font-weight:400}.touch{background:var(--bg);height:100%}.touch body{overscroll-behavior:none;touch-action:manipulation;box-sizing:border-box;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);flex-direction:column;justify-content:center;align-items:center;display:flex;overflow:hidden}.touch .stage{width:min(100vw - env(safe-area-inset-left) - env(safe-area-inset-right), (100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 64px) * 1.5);flex:none;margin:0}.touch .play{gap:6px 8px;max-height:64px;padding:6px 8px;overflow:auto}.touch .play button.item:has(img){width:44px;height:44px}.touch .play button.item img{width:38px;height:38px}.touch .mute{padding:4px 8px;font-size:12px}.rotate-hint{display:none}@media (aspect-ratio<=1){.touch .play{max-height:none}.touch .rotate-hint{color:var(--muted);text-align:center;margin-top:18px;font-size:13px;display:block}}@media (aspect-ratio>=17/10){.touch body.playing-page{flex-direction:row}.touch body.playing-page .stage{width:min(100vw - env(safe-area-inset-left) - env(safe-area-inset-right) - 96px, (100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) * 1.5)}.touch .playing-page .play{flex-flow:column;flex:96px;justify-content:flex-start;align-self:stretch;align-items:stretch;min-width:96px;max-width:220px;max-height:100%;padding:8px 6px;font-size:12px;overflow-y:auto}.touch .playing-page .play .group{justify-content:center}.touch .playing-page .play>button,.touch .playing-page .play .group>button:not(.item){white-space:normal;padding:4px 6px;font-size:12px}}.card.title-card{background:url(./assets/title-D19iokH-.webp) 50%/cover no-repeat;align-content:start;padding-top:6%}.card.title-card .game-title{color:#fff4dc;letter-spacing:.01em;text-shadow:0 3px #7a3a12,0 6px 18px #3c1400b3;font:800 clamp(30px,6.4vw,78px)/1 Georgia,Times New Roman,serif}.card.title-card>:not(.game-title):not(button){color:#fff4dc;text-shadow:0 1px 3px #000;font-size:clamp(13px,1.5vw,18px)}.card.title-card button{color:#fff4dc;cursor:pointer;background:#7a3a12e0;border:2px solid #ffe2a8;border-radius:22px;padding:9px 20px;font:700 18px/1 system-ui,sans-serif}.card.title-card button:hover{background:#a05018f2}.stage img.prop,.stage .things img.person:not(.puppet){transform-origin:50% 100%;animation:4s ease-in-out infinite breathe}.stage img.prop.talking,.stage .things img.person:not(.puppet).talking{animation:.42s ease-in-out infinite alternate talk}@keyframes breathe{0%,to{transform:scaleY(1)}50%{transform:scaleY(1.012)}}@keyframes talk{0%{transform:translateY(0)rotate(-.6deg)}to{transform:translateY(-1.2%)rotate(.6deg)}}.card.end-card{background:url(./assets/end-Dik9f0uS.webp) 50%/cover no-repeat;align-content:start;padding-top:5%;animation:1.6s ease-out fade-up}.card.end-card .end-title{color:#fff4dc;text-shadow:0 3px #7a3a12,0 6px 18px #3c1400b3}.card.end-card button{color:#fff4dc;cursor:pointer;background:#7a3a12e0;border:2px solid #ffe2a8;border-radius:22px;padding:9px 20px;font:700 17px/1 system-ui,sans-serif}@keyframes fade-up{0%{opacity:0}to{opacity:1}}.card .end-title{color:#ffd9a0;font:700 clamp(22px,3.4vw,40px)/1.2 Georgia,serif}.marker{pointer-events:none;z-index:6000;border:2px solid #fff0c8e6;border-radius:50%;width:28px;height:12px;margin:-6px 0 0 -14px;animation:.5s ease-out forwards ping;position:absolute}@keyframes ping{0%{opacity:1;transform:scale(.4)}to{opacity:0;transform:scale(1.4)}}.shake{animation:.25s shake}@keyframes shake{25%{transform:translate(4px,-2px)}50%{transform:translate(-4px,2px)}75%{transform:translate(2px,1px)}}</style>
+  <script type="module" crossorigin src="./assets/index-DCJzi0nW.js"></script>
+</head>
+<body>
+<div class="stage" id="stage" tabindex="0"><img class="room" id="room" alt="The living room"></div>
+<div class="play" id="play"></div>
+<div class="rotate-hint">↻ Turn your phone on its side for a bigger picture.</div>
+<div class="controls">
+  <label>Room <select id="roomSel"><option value="c">C: flatter camera</option><option value="b">Stage camera B (steeper, before C)</option><option value="a">Stage camera A</option><option value="old">Old (close camera)</option></select></label>
+  <label>Character size <input id="size" type="range" min="0.5" max="1.5" step="0.05" value="1.05"> <output id="sizeOut">1.05</output></label>
+  <label>Depth strength <input id="depth" type="range" min="0" max="1" step="0.05" value="1"> <output id="depthOut">1.00</output></label>
+  <label>Walk fps <input id="fps" type="range" min="3" max="14" step="1" value="6"> <output id="fpsOut">6</output></label>
+  <label><input id="lock" type="checkbox" checked> Feet locked to the floor</label>
+  <label><input id="shadows" type="checkbox" checked> Shadows</label>
+  <label><input id="fg" type="checkbox" checked> Foreground</label>
+  <label>Shoelace <select id="lace"><option value="1">take 1 (a loop)</option><option value="2">take 2 (across the rug)</option><option value="">gone (shoes dug out)</option></select></label>
+  <label>Run fps <input id="runFps" type="range" min="6" max="18" step="1" value="11"> <output id="runFpsOut">11</output></label>
+  <label>Jump over the dog <select id="jumpMode"><option value="run">when running</option><option value="always">always</option><option value="never">never (go around)</option></select></label>
+  <label>Mom sneezes every <input id="sneezeEvery" type="range" min="4" max="40" step="1" value="12"> <output id="sneezeEveryOut">12</output> s</label>
+  <span>Mom: <button id="momTalk">Nag</button> <button id="momWave">Shoo</button> <button id="momPill">Claritin</button></span>
+  <label>Music <select id="music"><option value="b">B: intro, then loop</option><option value="a">A: the whole start, looped</option><option value="">off</option></select></label>
+  <label>Volume <input id="musicVol" type="range" min="0" max="1" step="0.05" value="0.22"> <output id="musicVolOut">0.22</output></label>
+  <label>Floor sound <select id="surface"><option>wood</option><option>concrete</option><option>gravel</option><option value="">off</option></select></label>
+</div>
+<div class="hint">Keys: <kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd> or <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to walk, hold <kbd>Shift</kbd> to run. Mouse or touch: click/tap the floor to walk there, double-click/double-tap to run. He goes around the dog, or jumps him when running.</div>
+
+<script src="manifest.js"></script>
+<script>
+// Each room's perspective, measured from its picture: the horizon (where the rug's edges meet), and
+// pixels per metre at one floor height (from the front door, 2 m tall). Where you can walk; where the
+// dog sleeps and Mom stands. `feel` is the character size and depth strength to judge it at, set
+// when you pick the room.
+// C is room B's floor reprojected from a camera further back (tools/reproject.ts, horizon 280 → -360),
+// then cleaned up by the model (sources/room-c.txt); its horizons are measured from the rug's outline.
+// Then the sneaker came out of the pile (sources/room-c-pile.txt): the shoes are buried, and all you see
+// is the shoelace trailing out (a prop, `laces`: [picture, x, y, width] where its end tucks under the hoodie).
+// At depth 1 (the room's own perspective) and size 1.05 it matches B at 0.85 and 0.5 within 2%.
+const FG_B = [['fg-left.png', -24, 610, 310], ['fg-right.png', 1170, 748, 390]];
+// `couch`: where the kid sits at the start (his feet, in front of the cushions). `momZone`: the floor
+// Mom wanders (x0, y0, x1, y1), her end of the room, well away from the dog.
+// `door`: the floor in front of the front door, where the dog drags you out.
+// `things`: the furniture the story moves (the crate gets taken in Act 2, the bed in Act 3), each drawn in place on
+// the room by the model (sources/prop-*.txt) and cut to a real size by tools/cut-prop.ts. Keyed by the hotspot they
+// draw (rooms/home.yaml): `at` is the picture's top-left, `w` its width, `z` its depth (the floor y it stands on),
+// `foot` a floor footprint to walk round ([cx, cy, rx, ry], like the dog's). Shown while their hotspot is there
+// (src/scene/play.ts says which); the art test alone shows them all. `usedBy`: a gesture of Mom's picks it up
+// and puts it back (her Claritin: she takes one as she comes in), `from` where she stands to do it; it's off the
+// table while it's in her hand.
+const THINGS_C = {
+  crate: { src: 'prop-crate.png', at: [60, 560], w: 287, z: 770, foot: [200, 752, 132, 24] },
+  'dog-bed': { src: 'prop-bed.png', at: [220, 824], w: 450, z: 985, foot: [445, 985, 222, 62] },
+  tv: { src: 'prop-tv.png', at: [1214, 340], w: 76, z: 412 },
+  claritin: { src: 'prop-claritin.png', at: [1156, 469], w: 13, z: 490, usedBy: 'pill', from: [1254, 652] },
+};
+const ROOM_C = { things: THINGS_C, door: [120, 662], couch: [612, 642], momZone: [1010, 652, 1420, 780], laces: { 1: ['lace-1.png', 318, 620, 199], 2: ['lace-2.png', 318, 620, 236] }, horizon: -335, ref: [600, 228], walk: [40, 628, 1490, 1005], dog: [770, 806], mom: [1300, 640], start: [497, 896], fg: FG_B, feel: [1.05, 1] };
+const ROOMS = {
+  c: { ...ROOM_C, src: 'room-c.png' },
+  b: { src: 'room-b.png', horizon: 213, ref: [600, 228], walk: [40, 628, 1490, 1005], dog: [770, 770], mom: [1300, 640], start: [420, 860],
+       fg: FG_B, feel: [0.85, 0.5] },
+  a: { src: 'room-a.png', horizon: 347, ref: [560, 237], walk: [40, 592, 1490, 1005], dog: [790, 745], mom: [1265, 594], start: [420, 860] },
+  old: { src: 'room-old.png', horizon: 116, ref: [600, 262], walk: [80, 625, 1230, 960], dog: [790, 792], mom: [1262, 592], start: [380, 880] },
+};
+const ROOM_W = 1536;
+const stage = document.getElementById('stage');
+const $ = (id) => document.getElementById(id);
+const opts = { size: 1.05, depth: 1, fps: 6, runFps: 11, lock: true };
+for (const id of ['size', 'depth', 'fps', 'runFps']) $(id).oninput = (e) => { opts[id] = +e.target.value; $(id + 'Out').textContent = (+e.target.value).toFixed(id.endsWith('ps') ? 0 : 2); };
+$('lock').onchange = (e) => (opts.lock = e.target.checked);
+$('shadows').onchange = (e) => stage.classList.toggle('noshadows', !e.target.checked);
+$('fg').onchange = (e) => stage.classList.toggle('nofg', !e.target.checked);
+let room;
+function setRoom(key) {
+  room = ROOMS[key]; $('room').src = room.src;
+  if (room.feel) [['size', room.feel[0]], ['depth', room.feel[1]]].forEach(([id, v]) => { $(id).value = v; $(id).oninput({ target: $(id) }); });
+  // Things close to the camera, drawn over everyone.
+  for (const el of stage.querySelectorAll('.fg')) el.remove();
+  for (const [src, x, y, w] of room.fg ?? []) {
+    const img = document.createElement('img'); img.className = 'fg'; img.src = src;
+    Object.assign(img.style, { left: (x / ROOM_W) * 100 + '%', top: (y / 1024) * 100 + '%', width: (w / ROOM_W) * 100 + '%' });
+    stage.appendChild(img);
+  }
+  showLace(); showThings(null);
+  [kid.x, kid.y] = room.couch ?? room.start;
+  kid.couch = room.couch ? { up: -1 } : null;
+  if (typeof mom !== 'undefined') Object.assign(mom, { x: room.mom[0], y: room.mom[1], target: null, rest: 0 });
+  stage.focus();
+}
+// The shoelace lies flat on the floor, under everyone.
+function showLace() {
+  for (const el of stage.querySelectorAll('.prop')) el.remove();
+  const lace = room.laces?.[$('lace').value]; if (!lace) return;
+  const [src, x, y, w] = lace, img = document.createElement('img'); img.className = 'prop'; img.src = src;
+  Object.assign(img.style, { left: (x / ROOM_W) * 100 + '%', top: (y / 1024) * 100 + '%', width: (w / ROOM_W) * 100 + '%' });
+  stage.appendChild(img);
+}
+$('lace').onchange = showLace;
+// The room's things: all of them (null), or those whose hotspot ids are listed.
+let thingsShown = [], thingsAsked = null;
+const thingsHeld = new Set();
+const thingShows = (id, th, ids) => !thingsHeld.has(id) && (!ids || ids.includes(id));
+function showThings(ids) {
+  thingsAsked = ids;
+  for (const el of stage.querySelectorAll('.thing')) el.remove();
+  thingsShown = Object.entries(room.things ?? {}).filter(([id, th]) => thingShows(id, th, ids)).map(([id, th]) => {
+    const img = document.createElement('img'); img.className = 'thing'; img.src = th.src; img.alt = '';
+    Object.assign(img.style, { left: (th.at[0] / ROOM_W) * 100 + '%', top: (th.at[1] / 1024) * 100 + '%', width: (th.w / ROOM_W) * 100 + '%', zIndex: th.z });
+    stage.appendChild(img);
+    return { id, ...th };
+  });
+}
+$('roomSel').onchange = (e) => setRoom(e.target.value);
+
+// Pixels per metre at floor height y: the room's real perspective at depth strength 1, the same
+// everywhere at 0 (the middle of the floor's), and in between, a blend.
+function pxPerM(y) {
+  const K = room.ref[1] / (room.ref[0] - room.horizon);
+  const mid = K * ((room.walk[1] + room.walk[3]) / 2 - room.horizon);
+  const real = K * (y - room.horizon);
+  return opts.size * mid * Math.pow(real / mid, opts.depth);
+}
+
+// The dog's frames are anchored at their middle.
+for (const f of MANIFEST.sleep.frames) f.ax = f.w / 2;
+
+function actor(name, contacts = 0) {
+  const soft = document.createElement('div'); soft.className = 'shadow soft'; stage.appendChild(soft);
+  const feet = Array.from({ length: contacts }, () => { const d = document.createElement('div'); d.className = 'shadow contact'; stage.appendChild(d); return d; });
+  const imgs = MANIFEST[name].frames.map((f) => { const img = document.createElement('img'); img.className = 'sprite'; img.src = f.src; stage.appendChild(img); return img; });
+  return { name, imgs, soft, feet, shown: null };
+}
+function place(el, x, y, w, h, z) {
+  el.style.width = w * unit() + 'px'; el.style.height = h * unit() + 'px';
+  el.style.transform = `translate(${x * unit()}px, ${y * unit()}px)`; el.style.zIndex = z;
+}
+const unit = () => stage.clientWidth / ROOM_W;
+// Draw `frame` of an actor with its anchor (feet) at room point (x, y), facing left if `flip`.
+function draw(a, frame, x, y, flip, softW = 0.5, lift = 0, sy = 1) {
+  const m = MANIFEST[a.name], f = m.frames[frame];
+  // In the air, he's above whatever he's jumping over: drawn in front of it.
+  const k = pxPerM(y) / m.pxPerM, w = f.w * k, h = f.h * k, z = Math.round(y) + (lift > 4 ? 400 : 0);
+  const left = flip ? x - (f.w - f.ax) * k : x - f.ax * k;
+  const img = a.imgs[frame];
+  if (a.shown !== img) { if (a.shown) a.shown.classList.remove('on'); img.classList.add('on'); a.shown = img; }
+  a.soft.style.display = '';
+  // Sink the feet a hair into the floor: the scaled-down bottom row is half see-through.
+  const sink = Math.max(1.5, h * 0.006);
+  img.style.width = w * unit() + 'px';
+  img.style.height = sy === 1 ? '' : h * sy * unit() + 'px';
+  // The anchor is the bottom middle unless the frame says otherwise (the dog's reactions do).
+  const top = y - (f.ay ?? f.h) * k * sy;
+  img.style.transform = `translate(${left * unit()}px, ${(top + sink - lift) * unit()}px)` + (flip ? ` translateX(${w * unit()}px) scaleX(-1)` : '');
+  img.style.zIndex = z;
+  // Shadows tuck under the feet: almost all of each one is above the lowest pixel (soles curve up at
+  // the toe and heel), so none of it shows below them as a gap.
+  // In the air, the shadow stays on the floor and shrinks.
+  const air = Math.max(0.55, 1 - lift / (h * 1.4));
+  const sw = w * softW * air, sh = Math.max(8, h * 0.06) * air;
+  place(a.soft, x - sw / 2, y - sh * 0.8, sw, sh, z);
+  // A dark contact shadow under each foot that's on the floor in this frame.
+  const ground = f.ground ?? [];
+  a.feet.forEach((d, i) => {
+    const run = ground[i];
+    // Front and back views give each foot's height ([x0, x1, -lift]); a lifted foot casts none here.
+    if (!run || (run[2] ?? 0) < -12 || lift > 3) { d.style.display = 'none'; return; }
+    d.style.display = '';
+    const [r0, r1] = flip ? [-run[1], -run[0]] : run;
+    const fw = (r1 - r0) * k * 1.05, fh = Math.max(5, h * 0.03);
+    place(d, x + ((r0 + r1) / 2) * k - fw / 2, y + (run[2] ?? 0) * k - fh * 0.85, fw, fh, z);
+  });
+}
+
+function hide(a) {
+  if (a.shown) a.shown.classList.remove('on');
+  a.shown = null; a.soft.style.display = 'none'; for (const d of a.feet) d.style.display = 'none';
+}
+// The kid has three walk cycles: from the side (flipped for left), from the front and from behind.
+// Two of each: in his dog-face slippers, and in socks (before he's found them: `kid.socks`).
+const kidViews = (x) => {
+  const v = { side: actor('walk' + x, 2), front: actor('front' + x, 2), back: actor('back' + x, 2), idle: actor('idle' + x, 2), run: actor('run' + x, 2) };
+  for (const name of ['jumpSide', 'jumpFront', 'jumpBack']) v[name] = actor(name + x);
+  return v;
+};
+const VIEWS_SLIPPERS = kidViews(''), VIEWS_SOCKS = kidViews('Socks');
+const V = () => (kid.socks ? VIEWS_SOCKS : VIEWS_SLIPPERS);
+/** Hides every kid sprite but `keep`, slippers and socks alike. */
+const hideKid = (keep) => { for (const a of [...Object.values(VIEWS_SLIPPERS), ...Object.values(VIEWS_SOCKS), couch, couchSocks]) if (a !== keep) hide(a); };
+const dog = actor('sleep'), stirred = actor('stir');
+const MOM = { sneeze: actor('sneeze'), talk: actor('momTalk'), wave: actor('momWave'), pill: actor('momPill'), pose: actor('momPose'), walk: actor('momWalk', 2), nice: actor('momNice'), money: actor('momMoney') };
+const couch = actor('couch'), couchSocks = actor('couchSocks');
+const couchActor = () => (kid.socks ? couchSocks : couch);
+const dogUp = actor('dogUp'), dogRun = actor('dogRun');
+// Mom wanders her end of the room: rests a few seconds (and sneezes, now and then), walks somewhere else.
+// `cross`: she's lost patience (cross frames, hands on hips) instead of friendly. `money`: she's holding out
+// the milk money (while she talks you into the errand).
+const mom = { x: 0, y: 0, facing: -1, walkT: 0, target: null, rest: 2, away: false, arrive: null, cross: false, money: false };
+// The reaction frames' anchors line them up with the sleeping dog (tools/align-stir.ts).
+const kid = { x: 0, y: 0, facing: 1, view: 'side', walkT: 0, frame: 2, path: [], jump: null, couch: null, socks: false };
+setRoom('c');
+
+const keys = new Set();
+const KEYMAP = { ArrowLeft: 'l', a: 'l', ArrowRight: 'r', d: 'r', ArrowUp: 'u', w: 'u', ArrowDown: 'd', s: 'd' };
+let shift = false;
+addEventListener('keydown', (e) => {
+  shift = e.shiftKey; startAudio();
+  const k = KEYMAP[e.key] ?? KEYMAP[e.key.toLowerCase?.()];
+  if (k && e.target.tagName !== 'SELECT') { keys.add(k); target = null; kid.path = []; kid.arrive = null; e.preventDefault(); }
+});
+addEventListener('keyup', (e) => { shift = e.shiftKey; const k = KEYMAP[e.key] ?? KEYMAP[e.key.toLowerCase?.()]; if (k) keys.delete(k); });
+addEventListener('blur', () => { keys.clear(); shift = false; });
+
+// Click or tap the floor to walk there; a second click or tap soon after, nearby, runs there.
+let target = null, lastTap = { t: 0, x: 0, y: 0 };
+// On a touch screen a long press is a right click (look): a tap waits for the finger to lift to know which.
+let press = null;
+stage.addEventListener('pointerdown', (e) => {
+  startAudio();
+  if (e.pointerType !== 'touch') return tapAt(e, e.button === 2 ? 'right' : 'left');
+  press = { e, timer: setTimeout(() => { const p = press; press = null; if (p) tapAt(p.e, 'right'); }, 450) };
+});
+stage.addEventListener('pointerup', (e) => {
+  if (e.pointerType !== 'touch' || !press) return;
+  clearTimeout(press.timer);
+  const p = press; press = null;
+  tapAt(p.e, 'left');
+});
+stage.addEventListener('pointercancel', () => { if (press) { clearTimeout(press.timer); press = null; } });
+function tapAt(e, button) {
+  const r = stage.getBoundingClientRect(), u = unit();
+  const x = (e.clientX - r.left) / u, y = (e.clientY - r.top) / u;
+  const [x0, y0, x1, y1] = room.walk;
+  if (window.scene?.click?.(button, [x, y])) return;
+  if (button === 'right') return;
+  kid.arrive = null; // a plain walk cancels whatever the game was walking him over to do
+  const tx = Math.max(x0, Math.min(x1, x)), ty = Math.max(y0, Math.min(y1, y));
+  const again = e.timeStamp - lastTap.t < 350 && Math.hypot(x - lastTap.x, y - lastTap.y) < 60;
+  lastTap = { t: e.timeStamp, x, y };
+  target = { run: again };
+  kid.path = plan([kid.x, kid.y], outside([tx, ty]), again);
+  const m = document.createElement('div'); m.className = 'marker';
+  Object.assign(m.style, { left: (tx / ROOM_W) * 100 + '%', top: (ty / 1024) * 100 + '%' });
+  stage.appendChild(m); setTimeout(() => m.remove(), 520);
+}
+
+stage.addEventListener('contextmenu', (e) => { if (window.scene) e.preventDefault(); });
+stage.addEventListener('pointermove', (e) => {
+  if (!window.scene?.hover) return;
+  const r = stage.getBoundingClientRect(), u = unit();
+  window.scene.hover([(e.clientX - r.left) / u, (e.clientY - r.top) / u]);
+});
+stage.addEventListener('pointerleave', () => window.scene?.hover?.(null));
+
+// Music, looped by Web Audio at exact samples (an <audio> loop leaves a gap). Each file has its join
+// crossfaded in already (sounds/README.md): B plays its first 11.5 s once as an intro, then loops the rest.
+const MUSIC = { a: { src: 'sounds/music-home-a.flac', loopStart: 0 }, b: { src: 'sounds/music-home-b.flac', loopStart: 552000 / 48000 } };
+const musicBufs = {}, stingsLoading = new Set();
+let music = null;
+// A scene's own music (the street's, set by the game), instead of the menu's pick.
+let track = null;
+const pickNow = () => track ?? MUSIC[$('music').value];
+// Muting sticks (this browser remembers it): the music, or all sound.
+const MUTE_KEY = 'pick-up-the-poo:music-muted', SOUND_KEY = 'pick-up-the-poo:sound-off';
+let muted = false, soundOff = false, master = null;
+try { muted = localStorage.getItem(MUTE_KEY) === '1'; soundOff = localStorage.getItem(SOUND_KEY) === '1'; } catch {}
+// ?mute: a silent tab (Claude's, checking things while you play in yours): no sound or music, and your settings untouched.
+const SILENT = false;
+if (SILENT) { muted = true; soundOff = true; }
+const keep = (key, value) => { if (!SILENT) try { localStorage.setItem(key, value); } catch {} };
+const soundBtn = Object.assign(document.createElement('button'), { className: 'mute sound', type: 'button' });
+const showSound = () => { soundBtn.textContent = '🔊 Sound'; soundBtn.classList.toggle('off', soundOff); soundBtn.title = soundOff ? 'Sound is off: turn it on' : 'Turn all sound off'; };
+showSound(); stage.append(soundBtn);
+soundBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+soundBtn.onclick = (e) => {
+  e.stopPropagation(); soundOff = !soundOff; showSound();
+  keep(SOUND_KEY, soundOff ? '1' : '0');
+  startAudio(); if (master) master.gain.value = soundOff ? 0 : 1; stage.focus();
+};
+const muteBtn = Object.assign(document.createElement('button'), { className: 'mute', type: 'button' });
+const showMute = () => { muteBtn.textContent = '♪ Music'; muteBtn.classList.toggle('off', muted); muteBtn.title = muted ? 'Music is off: turn it on' : 'Turn the music off'; };
+showMute(); stage.append(muteBtn);
+// Full screen, on a phone or tablet that can (not iPhone Safari: there, Add to Home Screen opens it full screen).
+const full = () => document.fullscreenElement ?? document.webkitFullscreenElement;
+// Out of full screen (or into it), the page is never left scrolled: it's all one screen.
+for (const ev of ['fullscreenchange', 'webkitfullscreenchange', 'orientationchange']) document.addEventListener(ev, () => setTimeout(() => window.scrollTo(0, 0), 50));
+function fullScreen() {
+  if (!document.documentElement.classList.contains('touch') || full()) return;
+  const el = document.documentElement, go = el.requestFullscreen?.bind(el) ?? el.webkitRequestFullscreen?.bind(el);
+  if (!go) return;
+  Promise.resolve(go({ navigationUI: 'hide' })).then(() => screen.orientation?.lock?.('landscape')).catch(() => {});
+}
+if (document.documentElement.classList.contains('touch') && (document.fullscreenEnabled || document.webkitFullscreenEnabled)) {
+  const fullBtn = Object.assign(document.createElement('button'), { className: 'mute full', type: 'button', textContent: '⛶', title: 'Full screen' });
+  fullBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+  fullBtn.onclick = (e) => { e.stopPropagation(); if (full()) (document.exitFullscreen ?? document.webkitExitFullscreen)?.call(document); else fullScreen(); };
+  stage.append(fullBtn);
+}
+muteBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+muteBtn.onclick = (e) => {
+  e.stopPropagation(); muted = !muted; showMute();
+  keep(MUTE_KEY, muted ? '1' : '0');
+  startAudio(); playMusic(); stage.focus();
+};
+function playMusic(fadeSec = 0) {
+  if (!audio) return;
+  // What's playing stops, or (changing scenes) fades out while the next fades in.
+  if (music) {
+    const old = music; music = null;
+    if (fadeSec) { old.gain.gain.setTargetAtTime(0, audio.currentTime, fadeSec / 3); old.src.stop(audio.currentTime + fadeSec * 1.5); } else old.src.stop();
+  }
+  // (A track without a src is silence: the epilogue.)
+  const pick = pickNow(); if (!pick || !pick.src || muted) return;
+  const go = (buf) => {
+    if (music || muted || pickNow() !== pick) return;
+    const src = audio.createBufferSource(), gain = audio.createGain();
+    // (A track can say where its loop ends: an MP3 pads its end. The finale plays `once`, to its ending.)
+    src.buffer = buf; src.loop = !pick.once; src.loopStart = pick.loopStart; src.loopEnd = Math.min(buf.duration, pick.loopEnd ?? buf.duration);
+    const vol = +$('musicVol').value;
+    if (fadeSec) { gain.gain.value = 0; gain.gain.setTargetAtTime(vol, audio.currentTime, fadeSec / 3); } else gain.gain.value = vol;
+    src.connect(gain).connect(master); src.start(0, pick.once ? pick.startAt ?? 0 : 0);
+    music = { src, gain };
+  };
+  if (musicBufs[pick.src]) return go(musicBufs[pick.src]);
+  fetch(pick.src).then((r) => r.arrayBuffer()).then((b) => audio.decodeAudioData(b)).then((buf) => { musicBufs[pick.src] = buf; go(buf); });
+}
+$('music').onchange = () => { startAudio(); playMusic(); };
+$('musicVol').oninput = (e) => { $('musicVolOut').textContent = (+e.target.value).toFixed(2); if (music) music.gain.gain.value = +e.target.value; };
+
+// Footsteps: the recording cut into single footfalls (found where its loudness jumps), one played,
+// a little varied, whenever a foot lands.
+let audio = null; const SURFACES = {};
+function startAudio() {
+  // (Not while the game's paused: a click doesn't bring the music back, carrying on does.)
+  if (audio) { if (audio.state === 'suspended' && !window.gamePaused) audio.resume(); return; }
+  audio = new (window.AudioContext || window.webkitAudioContext)();
+  window.addEventListener('pausechange', () => { if (window.gamePaused) audio.suspend(); else audio.resume(); });
+  // Everything goes through one volume, so muting all sound is one switch.
+  master = audio.createGain(); master.gain.value = soundOff ? 0 : 1; master.connect(audio.destination);
+  playMusic();
+  for (const name of ['wood', 'concrete', 'gravel']) {
+    fetch(`sounds/${name}-running.mp3`).then((r) => r.arrayBuffer()).then((b) => audio.decodeAudioData(b)).then((buf) => {
+      const d = buf.getChannelData(0), hop = Math.round(buf.sampleRate / 100), env = [];
+      for (let i = 0; i + hop < d.length; i += hop) { let s = 0; for (let j = i; j < i + hop; j++) s += d[j] * d[j]; env.push(Math.sqrt(s / hop)); }
+      const peak = Math.max(...env), on = [];
+      for (let i = 1; i < env.length; i++) if (env[i] > 0.3 * peak && env[i - 1] <= 0.3 * peak && (!on.length || i - on[on.length - 1] > 15)) on.push(i);
+      SURFACES[name] = { buf, steps: on.map((i, n) => { const s = Math.max(0, i / 100 - 0.015); return [s, Math.min(0.24, (on[n + 1] ?? i + 25) / 100 - s - 0.01)]; }) };
+    });
+  }
+  // Mom's sneezes: where the sound starts (after the silence) and where it's loudest (the CHOO).
+  for (const n of [1, 2]) {
+    fetch(`sounds/mom-sneeze-${n}.mp3`).then((r) => r.arrayBuffer()).then((b) => audio.decodeAudioData(b)).then((buf) => {
+      const d = buf.getChannelData(0), hop = Math.round(buf.sampleRate / 50), env = [];
+      for (let i = 0; i + hop < d.length; i += hop) { let s = 0; for (let j = i; j < i + hop; j++) s += d[j] * d[j]; env.push(Math.sqrt(s / hop)); }
+      const peak = Math.max(...env), at = env.indexOf(peak) / 50;
+      const start = Math.max(0, env.findIndex((e) => e > 0.05 * peak) / 50 - 0.05);
+      SNEEZES.push({ buf, start, lead: at - start });
+    });
+  }
+}
+const SNEEZES = [];
+/** Pans a sound to where it happens in the room (x in room pixels). */
+function at(x) {
+  if (!audio.createStereoPanner) return master;
+  const p = audio.createStereoPanner(); p.pan.value = Math.max(-0.8, Math.min(0.8, (x / ROOM_W) * 2 - 1)); p.connect(master);
+  return p;
+}
+/** Mom's sneeze, timed so its CHOO lands `inSec` from now. */
+let lastSneeze = -1;
+function sneezeSound(inSec) {
+  if (!audio || !SNEEZES.length) return;
+  let i = Math.floor(Math.random() * SNEEZES.length);
+  if (SNEEZES.length > 1 && i === lastSneeze) i = (i + 1) % SNEEZES.length;
+  lastSneeze = i;
+  const sn = SNEEZES[i], src = audio.createBufferSource(), g = audio.createGain();
+  src.buffer = sn.buf; src.playbackRate.value = 0.97 + Math.random() * 0.06; g.gain.value = 0.85;
+  src.connect(g).connect(at(mom.x));
+  src.start(audio.currentTime + Math.max(0, inSec - sn.lead), sn.start);
+}
+function footstep(loud) {
+  const s = SURFACES[$('surface').value];
+  if (!audio || !s || !s.steps.length) return;
+  const [start, dur] = s.steps[Math.floor(Math.random() * s.steps.length)];
+  const src = audio.createBufferSource(); src.buffer = s.buf; src.playbackRate.value = 0.94 + Math.random() * 0.12;
+  const g = audio.createGain(), now = audio.currentTime, vol = loud ? 0.9 : 0.4;
+  g.gain.setValueAtTime(vol, now); g.gain.setValueAtTime(vol, now + dur * 0.7); g.gain.linearRampToValueAtTime(0, now + dur);
+  src.connect(g).connect(at(kid.x)); src.start(now, start, dur + 0.02);
+}
+
+const W = MANIFEST.walk, CONTACTS = [0, 4];
+// Going up or down the floor, a metre covers fewer screen pixels than going across.
+const DEPTH_RATIO = 0.45;
+function clampToFloor() {
+  const [x0, y0, x1, y1] = room.walk;
+  kid.x = Math.max(x0, Math.min(x1, kid.x)); kid.y = Math.max(y0, Math.min(y1, kid.y));
+}
+// Obstacles: things on the floor to go around or jump over. A footprint is an ellipse on the floor,
+// grown by the kid's own size around his feet. Distances on the floor count going up it in the same
+// metres as going across (on screen it's squashed by DEPTH_RATIO).
+const MARGIN = [26, 12];
+function obstacles() {
+  const f = MANIFEST.stir.frames[3], w = (f.w * pxPerM(room.dog[1])) / MANIFEST.stir.pxPerM;
+  const things = thingsShown.filter((th) => th.foot).map((th) => ({ name: th.id, cx: th.foot[0], cy: th.foot[1], rx: th.foot[2], ry: th.foot[3] }));
+  return [{ name: 'dog', cx: room.dog[0], cy: room.dog[1] - 18, rx: w * 0.47, ry: 30, jump: true }, ...things];
+}
+const toUnit = (o, x, y, grow = 1) => [(x - o.cx) / ((o.rx + MARGIN[0]) * grow), (y - o.cy) / ((o.ry + MARGIN[1]) * grow)];
+const inside = (o, x, y, grow = 1) => { const [u, v] = toUnit(o, x, y, grow); return u * u + v * v < 1; };
+const lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+const floorDist = (a, b) => Math.hypot(b[0] - a[0], (b[1] - a[1]) / DEPTH_RATIO);
+/** Where the segment a→b enters and leaves the footprint, as fractions along it, or null if it misses. */
+function crossing(o, a, b, grow = 1) {
+  const [u0, v0] = toUnit(o, a[0], a[1], grow), [u1, v1] = toUnit(o, b[0], b[1], grow);
+  const du = u1 - u0, dv = v1 - v0, A = du * du + dv * dv, B = 2 * (u0 * du + v0 * dv), C = u0 * u0 + v0 * v0 - 1;
+  const disc = B * B - 4 * A * C;
+  if (!A || disc <= 0) return null;
+  const r = Math.sqrt(disc), t0 = (-B - r) / (2 * A), t1 = (-B + r) / (2 * A);
+  return t1 <= 0 || t0 >= 1 ? null : [Math.max(0, t0), Math.min(1, t1)];
+}
+const blocked = (a, b) => obstacles().some((o) => crossing(o, a, b, 0.995));
+/** A clicked spot inside a footprint moves to its edge, on the kid's side of it. */
+function outside(p) {
+  for (const o of obstacles()) {
+    if (!inside(o, p[0], p[1])) continue;
+    const side = Math.sign(toUnit(o, kid.x, kid.y)[1]) || 1;
+    const u = Math.max(-0.95, Math.min(0.95, toUnit(o, p[0], p[1])[0]));
+    const v = side * Math.sqrt(1 - u * u) * 1.03;
+    p = [o.cx + u * (o.rx + MARGIN[0]), o.cy + v * (o.ry + MARGIN[1])];
+  }
+  return p;
+}
+/**
+ * The way from a to b, as waypoints ({ p } to walk to, { jump, over } to jump to): straight if nothing's
+ * in the way; over the dog if jumping is on and it's a short hop; otherwise around, by the shortest
+ * route through points just outside the footprints.
+ */
+const MAX_JUMP_M = 1.2;
+function plan(a, b, run) {
+  const mode = $('jumpMode').value;
+  if (!blocked(a, b)) return [{ p: b }];
+  if (mode === 'always' || (mode === 'run' && run)) {
+    const hits = obstacles().map((o) => [o, crossing(o, a, b)]).filter(([, c]) => c);
+    if (hits.length === 1 && hits[0][0].jump) {
+      const [o, [t0, t1]] = hits[0], from = lerp(a, b, t0), to = lerp(a, b, t1);
+      if (floorDist(from, to) / pxPerM((from[1] + to[1]) / 2) <= MAX_JUMP_M) {
+        return [...(t0 > 0.001 ? [{ p: from }] : []), { jump: to, over: o }, { p: b }];
+      }
+    }
+  }
+  const [x0, y0, x1, y1] = room.walk;
+  const nodes = [a, b];
+  for (const o of obstacles()) for (let i = 0; i < 16; i++) {
+    const th = (i / 16) * Math.PI * 2, q = [o.cx + Math.cos(th) * (o.rx + MARGIN[0]) * 1.1, o.cy + Math.sin(th) * (o.ry + MARGIN[1]) * 1.25];
+    if (q[0] >= x0 && q[0] <= x1 && q[1] >= y0 && q[1] <= y1) nodes.push(q);
+  }
+  // Dijkstra over the visibility graph.
+  const best = nodes.map(() => Infinity), prev = nodes.map(() => -1), done = nodes.map(() => false);
+  best[0] = 0;
+  for (;;) {
+    let i = -1;
+    for (let j = 0; j < nodes.length; j++) if (!done[j] && best[j] < Infinity && (i < 0 || best[j] < best[i])) i = j;
+    if (i < 0 || i === 1) break;
+    done[i] = true;
+    for (let j = 0; j < nodes.length; j++) {
+      if (done[j] || blocked(nodes[i], nodes[j])) continue;
+      const d = best[i] + floorDist(nodes[i], nodes[j]);
+      if (d < best[j]) { best[j] = d; prev[j] = i; }
+    }
+  }
+  if (prev[1] < 0) return [{ p: b }];
+  const route = [];
+  for (let i = 1; i > 0; i = prev[i]) route.unshift({ p: nodes[i] });
+  return route;
+}
+
+// The dog, jumped over: he refuses to wake up, a little differently each time. The first three
+// build (an ear, one eye, rolling over); after that, any of them, never the same twice running.
+const STIR = {
+  ear: [['stir', 7, 260], ['stir', 3, 200], ['stir', 7, 200]],
+  eye: [['stir', 0, 350], ['stir', 1, 1800], ['stir', 3, 600]],
+  roll: [['stir', 4, 1500], ['stir', 5, 220], ['stir', 4, 220], ['stir', 5, 220], ['stir', 4, 220], ['stir', 5, 220], ['stir', 4, 1400], ['stir', 3, 500]],
+  yawn: [['stir', 0, 300], ['stir', 2, 1400], ['stir', 3, 600]],
+  snort: [['stir', 7, 220], ['stir', 3, 160], ['stir', 7, 260], ['stir', 3, 300]],
+  tail: [['stir', 6, 170], ['stir', 3, 130], ['stir', 6, 170], ['stir', 3, 130], ['stir', 6, 170], ['stir', 3, 300]],
+};
+const FIRST = ['ear', 'eye', 'roll'];
+let jumpedOver = 0, lastStir = '', dogStir = null;
+function dogReacts() {
+  let name = FIRST[jumpedOver];
+  if (!name) { const pool = Object.keys(STIR).filter((k) => k !== lastStir); name = pool[Math.floor(Math.random() * pool.length)]; }
+  jumpedOver++; lastStir = name; dogStir = { seq: STIR[name], t: 0 };
+  sneezeSoon(0.5);
+}
+// One dog throughout: the reaction sheet's (its sleeping sheet drew a longer, flatter dog, so he
+// changed shape whenever he stirred). Asleep is its frame 3, breathing: a slow 2% rise and fall.
+function drawDog(dt) {
+  let frame = 3, sy = 1 + 0.02 * Math.sin((t * Math.PI * 2) / 2.8);
+  if (dogStir) {
+    dogStir.t += dt * 1000;
+    let ms = dogStir.t, step = null;
+    for (const s of dogStir.seq) { if (ms < s[2]) { step = s; break; } ms -= s[2]; }
+    if (step) { frame = step[1]; sy = 1; } else dogStir = null;
+  }
+  hide(dog);
+  draw(stirred, frame, room.dog[0], room.dog[1], false, 0.9, 0, sy);
+}
+
+// Standing still: idle frames 0-3 face us (stand, blink, breathe in, glance), 4-5 are in profile
+// (stand, blink), 6-7 from behind (stand, weight on one leg).
+function idleFrame(view, t) {
+  const blink = t % 3.7 < 0.14;
+  if (view === 'side') return blink ? 5 : 4;
+  if (view === 'back') return t % 6 > 4.2 ? 7 : 6;
+  if (t % 11 > 9.6) return 3;
+  if (t % 7.3 > 6.5) return 2;
+  return blink ? 1 : 0;
+}
+// Mom's gestures, from the buttons: [frame, ms] in order, and what she says (one line, picked at random).
+// Dialogue always shows in one place, bottom centre, whoever's talking. Her sneezes wait while she's at it. The lines are hers from rooms/home.yaml.
+const ACTS = {
+  talk: { seq: [[0, 550], [1, 450], [0, 350], [2, 650], [1, 350], [0, 400], [3, 1000]],
+          lines: ['Walk. The. Dog. And get milk on the way back.', 'Why is he still asleep? Why are YOU still on the couch?', "I'm allergic to him. That's why YOU walk him."] },
+  wave: { seq: [[0, 380], [1, 280], [2, 280], [1, 280], [2, 280], [1, 280], [3, 1500]], lines: ['Bye! Milk!'] },
+  // Taking one, and setting the bottle back down on the table beside her (on our left): from where she stands
+  // (THINGS_C's `from`), the bottle in her hand in the last frame is just above its spot. The Mom buttons'
+  // "Claritin" plays it too.
+  pill: { seq: [[0, 1200], [1, 650], [2, 1000], [3, 900]] },
+  // In a good mood (the friendly frames, flipped to face the room): talking kindly, "would you, sweetie?".
+  chat: { seq: [[1, 600], [2, 700], [1, 450], [2, 600]], actor: 'nice', flip: true },
+  // Talking you into it, the milk money held out; and handing it over.
+  coax: { seq: [[1, 600], [2, 700], [1, 500], [2, 600]], actor: 'money', flip: true },
+  give: { seq: [[3, 1100]], actor: 'money', flip: true },
+};
+let momAct = null;
+const say = document.createElement('div'); say.className = 'say'; say.style.opacity = 0; stage.appendChild(say);
+function gesture(act, withLine) {
+  // On her way somewhere for a reason (coming in, coming over with the money): she gets there first.
+  if (mom.arrive && act !== 'give') return;
+  // Talking, in her mood: coaxing with the money, kindly, or cross.
+  if (act === 'talk' && !withLine) act = mom.cross ? 'talk' : mom.money ? 'coax' : 'chat';
+  startAudio(); momAct = { act, t: 0, withLine }; endSneeze(); mom.target = null;
+  if (!withLine) return;
+  const lines = ACTS[act].lines; say.className = 'say'; say.textContent = lines ? 'Mom: ' + lines[Math.floor(Math.random() * lines.length)] : ''; say.style.opacity = lines ? 1 : 0;
+}
+for (const [id, act] of [['momTalk', 'talk'], ['momWave', 'wave'], ['momPill', 'pill']]) $(id).onclick = () => { gesture(act, true); stage.focus(); };
+// Mom sneezes whenever the dog gets near: now and then, and soon after he's been stirred up (the
+// fur flies). Her frames: 0 nose twitching, 1 "ah... ah...", 2 CHOO, 3 glaring (also between sneezes).
+const SNEEZE = [[0, 700], [1, 650], [2, 380], [3, 1400]];
+let momSneeze = null, nextSneeze = 4;
+/** Her sneeze is over, or cut short: whatever waits for it (a `mom-sneezes` cue) goes on. */
+function endSneeze() { const s = momSneeze; momSneeze = null; s?.done?.(); }
+const sneezeGap = () => +$('sneezeEvery').value * (0.75 + Math.random() * 0.5);
+$('sneezeEvery').oninput = (e) => { $('sneezeEveryOut').textContent = e.target.value; if (!momSneeze) nextSneeze = t + sneezeGap(); };
+function sneezeSoon(sec) { if (!momSneeze) nextSneeze = Math.min(nextSneeze, t + sec); }
+const MOM_FPS = 7;
+function showMom(a, frame, flip = false) {
+  for (const o of Object.values(MOM)) if (o !== a) hide(o);
+  draw(a, frame, mom.x, mom.y, flip, 0.5);
+}
+function drawMom(dt) {
+  // In the kitchen (before she comes in): not in the picture, and not sneezing.
+  if (mom.away) { for (const o of Object.values(MOM)) hide(o); return; }
+  // A gesture, from the buttons: she stops where she is.
+  if (momAct) {
+    momAct.t += dt * 1000;
+    let ms = momAct.t, f = null;
+    for (const [fr, d] of ACTS[momAct.act].seq) { if (ms < d) { f = fr; break; } ms -= d; }
+    const A = ACTS[momAct.act];
+    if (f !== null) return showMom(MOM[A.actor ?? momAct.act], f, !!A.flip);
+    if (momAct.withLine) say.style.opacity = 0;
+    momAct.done?.();
+    momAct = null; nextSneeze = Math.max(nextSneeze, t + 3); mom.rest = t + 2;
+  }
+  // Walking: like the kid's side walk, she moves only when the frame changes, by her planted foot's step.
+  if (mom.target) {
+    const W = MANIFEST.momWalk, k = pxPerM(mom.y) / W.pxPerM;
+    const before = Math.floor(mom.walkT); mom.walkT += dt * MOM_FPS;
+    for (let i = before; i < Math.floor(mom.walkT) && mom.target; i++) {
+      const fx = mom.target[0] - mom.x, fy = (mom.target[1] - mom.y) / DEPTH_RATIO, d = Math.hypot(fx, fy), step = W.steps[i % 8] * k;
+      if (d <= step) {
+        [mom.x, mom.y] = mom.target; mom.target = null; mom.rest = t + 3 + Math.random() * 5;
+        if (mom.arrive) { const done = mom.arrive; mom.arrive = null; mom.rest = t + 6; done(); }
+        break;
+      }
+      mom.x += (fx / d) * step; mom.y += (fy / d) * step * DEPTH_RATIO; mom.facing = Math.sign(fx) || mom.facing;
+    }
+    if (mom.target) return showMom(MOM.walk, Math.floor(mom.walkT) % 8, mom.facing < 0);
+  }
+  // Resting: a sneeze when one's due, or else hands on hips. Then off somewhere else on her patch.
+  if (!momSneeze && t >= nextSneeze) momSneeze = { t: 0, heard: false };
+  if (momSneeze) {
+    momSneeze.t += dt * 1000;
+    let ms = momSneeze.t, f = null;
+    for (const [fr, d] of SNEEZE) { if (ms < d) { f = fr; break; } ms -= d; }
+    if (f === null) { endSneeze(); nextSneeze = t + sneezeGap(); mom.rest = Math.max(mom.rest, t + 1); }
+    else {
+      // At the "ah", start the sound so its CHOO lands with the CHOO frame.
+      if (f === 1 && !momSneeze.heard) { momSneeze.heard = true; sneezeSound((SNEEZE[0][1] + SNEEZE[1][1] - momSneeze.t) / 1000); }
+      if (f === 2 && !stage.classList.contains('shake')) { stage.classList.add('shake'); setTimeout(() => stage.classList.remove('shake'), 260); }
+      return showMom(MOM.sneeze, f);
+    }
+  }
+  const zone = room.momZone;
+  if (zone && t >= mom.rest && !mom.hold) {
+    let p;
+    do p = [zone[0] + Math.random() * (zone[2] - zone[0]), zone[1] + Math.random() * (zone[3] - zone[1])];
+    while (Math.hypot(p[0] - mom.x, (p[1] - mom.y) / DEPTH_RATIO) < 150);
+    mom.target = p; mom.walkT = 0;
+  }
+  // At rest: holding out the money, friendly, or cross (hands on hips).
+  if (mom.cross) showMom(MOM.pose, 0);
+  else if (mom.money) showMom(MOM.money, 0, true);
+  else showMom(MOM.nice, 0, true);
+}
+// Dragged out: the dog leaps up (the getting-up frames), then gallops for the front door with the kid
+// running behind on the leash (a line from the end of the leash in his frames to the kid's hand), and the
+// picture fades out at the door. Mom sneezes as they pass.
+const UP = [[0, 350], [1, 300], [2, 650], [3, 400]];
+const DOG_SPEED = 3.6, KID_BEHIND = 1.5; // metres per second; metres of leash between them
+let drag = null;
+const leash = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+leash.setAttribute('class', 'leash'); leash.setAttribute('viewBox', '0 0 1536 1024'); leash.setAttribute('preserveAspectRatio', 'none');
+leash.innerHTML = '<line stroke="#b81d27" stroke-width="5" stroke-linecap="round" />';
+const fade = Object.assign(document.createElement('div'), { className: 'fade' });
+stage.append(leash, fade); leash.style.display = 'none';
+function dragOut() {
+  kid.path = []; kid.arrive = null; kid.couch = null; hide(couch); hide(couchSocks);
+  return new Promise((resolve) => { drag = { phase: 0, t: 0, x: room.dog[0], y: room.dog[1], resolve }; });
+}
+function drawDrag(dt) {
+  drag.t += dt;
+  hide(stirred); hide(dog);
+  hideKid(null);
+  const d = drag, door = room.door;
+  if (d.phase === 0) {
+    let ms = d.t * 1000, f = null;
+    for (const [fr, len] of UP) { if (ms < len) { f = fr; break; } ms -= len; }
+    if (f === 2 && !d.sneezed) { d.sneezed = true; sneezeSoon(0.3); }
+    if (f === null) { d.phase = 1; d.t = 0; f = 3; }
+    hide(dogRun); draw(dogUp, f, d.x, d.y, false, 0.8);
+    kid.facing = Math.sign(d.x - kid.x) || -1; kid.view = 'side';
+    draw(V().idle, idleFrame('side', t), kid.x, kid.y, kid.facing < 0, 0.45);
+    return;
+  }
+  // Gallop for the door; the kid follows a leash-length behind, pulled along at a run.
+  // To the door, then straight on out through it (to the left, out of the picture); the kid stays a
+  // leash-length behind him the whole way.
+  const m = pxPerM(d.y), step = DOG_SPEED * m * dt;
+  let back = [1, 0];
+  if (!d.out) {
+    const fx = door[0] - d.x, fy = (door[1] - d.y) / DEPTH_RATIO, dist = Math.hypot(fx, fy);
+    if (dist <= step) { [d.x, d.y] = door; d.out = 0.0001; }
+    else { d.x += (fx / dist) * step; d.y += (fy / dist) * step * DEPTH_RATIO; back = [-fx / dist, -fy / dist]; }
+  } else d.x -= step;
+  const want = [d.x + back[0] * KID_BEHIND * m, d.y + back[1] * KID_BEHIND * m * DEPTH_RATIO];
+  const kx = want[0] - kid.x, ky = (want[1] - kid.y) / DEPTH_RATIO, kd = Math.hypot(kx, ky), kstep = DOG_SPEED * 1.25 * pxPerM(kid.y) * dt;
+  if (kd > 0.5) { const k = Math.min(1, kstep / kd); kid.x += kx * k; kid.y += ky * k * DEPTH_RATIO; }
+  kid.facing = -1; kid.view = 'side';
+  const runFrame = Math.floor(d.t * 14) % 8;
+  hide(dogUp); draw(dogRun, runFrame, d.x, d.y, false, 0.8);
+  draw(V().run, Math.floor(d.t * opts.runFps) % 8, kid.x, kid.y, true, 0.45);
+  if (!d.steps || Math.floor(d.t * opts.runFps / 4) > d.steps) { d.steps = Math.floor(d.t * opts.runFps / 4); footstep(true); }
+  // The leash: from the end of his (the right edge of his frame, a quarter of the way down) to the kid's hand.
+  const f = MANIFEST.dogRun.frames[runFrame], k = pxPerM(d.y) / MANIFEST.dogRun.pxPerM, km = pxPerM(kid.y);
+  const line = leash.firstChild;
+  line.setAttribute('x1', d.x + (f.w - f.ax) * k - 4); line.setAttribute('y1', d.y - (f.ay - f.h * 0.25) * k);
+  line.setAttribute('x2', kid.x - 0.12 * km); line.setAttribute('y2', kid.y - 0.72 * km);
+  // Only once he's behind the dog (as the dog runs past him, the leash in the frames is enough).
+  const x1 = d.x + (f.w - f.ax) * k - 4, x2 = kid.x - 0.12 * km;
+  leash.style.display = x2 > x1 ? '' : 'none'; leash.style.zIndex = Math.round(Math.min(d.y, kid.y)) - 1;
+  // Out of the door: fade to black, then done.
+  if (d.out) {
+    d.out += dt;
+    fade.style.opacity = Math.min(1, d.out / 0.7);
+    if (d.out > 0.9 && d.resolve) { const r = d.resolve; d.resolve = null; r(); }
+  }
+}
+let last = performance.now(), t = 0;
+// Gone from the living room (the game's moved the picture on to the street): nothing in here moves, sneezes or
+// steps any more.
+let goneFromRoom = false;
+function tick(now) {
+  if (goneFromRoom) return;
+  // The first frame's timestamp can be a little before `last`: never let time run backwards.
+  // (Stopped while the game's paused: src/scene/pause.ts.)
+  const dt = window.gamePaused ? 0 : Math.max(0, Math.min(0.1, (now - last) / 1000)); last = now; t += dt;
+  // Where to go: the keys, or else the clicked spot. (dx, dy) is a direction on the floor, where
+  // dy counts in the same metres as dx (on screen it's squashed by DEPTH_RATIO).
+  if (drag) { drawDrag(dt); drawMom(dt); requestAnimationFrame(tick); return; }
+  // On the couch, reading, until you send him somewhere: then he gets up (a moment), and goes.
+  if (kid.couch) {
+    const wants = kid.path.length || keys.size;
+    if (wants && kid.couch.up < 0) kid.couch.up = t;
+    if (kid.couch.up >= 0 && t - kid.couch.up > 0.45) { kid.couch = null; hide(couch); hide(couchSocks); }
+    else {
+      hideKid(null);
+      const f = kid.couch.up >= 0 ? 3 : momAct && momAct.act !== 'pill' ? 2 : t % 6.5 > 5.9 ? 1 : 0;
+      hideKid(couchActor());
+      draw(couchActor(), f, kid.x, kid.y, false, 0.55);
+      drawDog(dt); drawMom(dt);
+      requestAnimationFrame(tick);
+      return;
+    }
+  }
+  if (kid.arrive && !kid.path.length && !kid.jump && !kid.couch) { const done = kid.arrive; kid.arrive = null; done(); }
+  let dx = (keys.has('r') ? 1 : 0) - (keys.has('l') ? 1 : 0), dy = (keys.has('d') ? 1 : 0) - (keys.has('u') ? 1 : 0);
+  let running = shift, left = Infinity;
+  if (!dx && !dy && !kid.jump && kid.path.length) {
+    running = target?.run;
+    const next = kid.path[0];
+    if (next.jump) {
+      kid.path.shift();
+      kid.jump = { from: [kid.x, kid.y], to: next.jump, t: 0, dur: running ? 0.62 : 0.8, over: false };
+    } else {
+      dx = next.p[0] - kid.x; dy = (next.p[1] - kid.y) / DEPTH_RATIO;
+      left = Math.hypot(dx, dy);
+      if (left < 2) { kid.path.shift(); dx = dy = 0; }
+    }
+  }
+  if (kid.jump) {
+    // Crouch, take off, fly (an arc; the shadow stays on the floor), land.
+    const J = kid.jump, before = J.t / J.dur;
+    J.t += dt; const s = Math.min(1, J.t / J.dur);
+    const p = Math.max(0, Math.min(1, (s - 0.18) / 0.6));
+    [kid.x, kid.y] = lerp(J.from, J.to, p);
+    const jx = J.to[0] - J.from[0], jy = (J.to[1] - J.from[1]) / DEPTH_RATIO, jl = Math.hypot(jx, jy) || 1;
+    if (Math.abs(jx / jl) >= 0.45) { kid.view = 'side'; kid.facing = Math.sign(jx); } else kid.view = jy > 0 ? 'front' : 'back';
+    const set = kid.view === 'side' ? 'jumpSide' : kid.view === 'front' ? 'jumpFront' : 'jumpBack';
+    const frame = s < 0.18 ? 0 : s < 0.3 ? 1 : s < 0.78 ? 2 : 3;
+    const lift = 0.75 * pxPerM(kid.y) * 4 * p * (1 - p); // 75 cm at the top: clears the dog
+    if (before < 0.18 && s >= 0.18) footstep(false);
+    if (before < 0.78 && s >= 0.78) { footstep(true); setTimeout(() => footstep(true), 45); }
+    if (!J.over && p >= 0.5) { J.over = true; dogReacts(); }
+    if (s >= 1) { kid.jump = null; kid.walkT = 0; }
+    hideKid(V()[set]);
+    draw(V()[set], frame, kid.x, kid.y, kid.view === 'side' && kid.facing < 0, kid.view === 'side' ? 0.45 : 0.6, lift);
+  }
+  const len = Math.hypot(dx, dy); if (len) { dx /= len; dy /= len; }
+  const moving = len > 0 && !kid.jump;
+  // Mostly sideways walks in profile; mostly up or down, from behind or the front.
+  if (moving) {
+    if (Math.abs(dx) >= 0.45) { kid.view = 'side'; kid.facing = Math.sign(dx); }
+    else kid.view = dy > 0 ? 'front' : 'back';
+  }
+  const runSide = running && kid.view === 'side' && V().run;
+  const set = !moving ? 'idle' : runSide ? 'run' : kid.view;
+  const cyc = MANIFEST[set === 'idle' ? 'walk' : V()[set].name];
+  const fps = running ? opts.runFps : opts.fps;
+  const k = pxPerM(kid.y) / cyc.pxPerM;
+  const go = (dist) => {
+    const d = Math.min(dist, left); left -= d;
+    const was = [kid.x, kid.y];
+    kid.x += dx * d; kid.y += dy * d * DEPTH_RATIO; clampToFloor();
+    // The keys can't walk him into the dog either.
+    if (obstacles().some((o) => inside(o, kid.x, kid.y, 0.9))) [kid.x, kid.y] = was;
+  };
+  if (moving) {
+    if (kid.set !== set) { kid.walkT = 0; kid.set = set; }
+    const before = Math.floor(kid.walkT);
+    kid.walkT += dt * fps;
+    // Only the side views' steps are a real distance (the front and back views' planted foot barely
+    // moves in the drawings, so their measured "steps" mean nothing): they go at the side walk's pace.
+    const steps = kid.view === 'side' ? cyc.steps : null;
+    const cycle = (steps ?? W.steps).reduce((a, b) => a + b, 0);
+    for (let i = before; i < Math.floor(kid.walkT); i++) {
+      if (CONTACTS.includes((i + 1) % 8)) footstep(running);
+      // Side views move only when the frame changes, by how far the planted foot travels in it.
+      if (opts.lock && steps && kid.view === 'side') go(steps[i % 8] * k);
+    }
+    if (!(opts.lock && steps && kid.view === 'side')) go((cycle * fps / 8) * k * dt * (running ? 1.25 : 1));
+    kid.frame = Math.floor(kid.walkT) % 8;
+  } else {
+    kid.walkT = 0; kid.set = 'idle';
+  }
+  if (!kid.jump) {
+    const kidFrame = moving ? kid.frame : idleFrame(kid.view, t);
+    hideKid(V()[set]);
+    draw(V()[set], kidFrame, kid.x, kid.y, kid.view === 'side' && kid.facing < 0, kid.view === 'side' ? 0.45 : 0.6);
+  }
+  drawDog(dt);
+  drawMom(dt);
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+// What the game layer (src/scene/play.ts) can do with the picture. It's loaded as a module when the
+// page is served by Vite (make dev); from a plain file server the page is the art test alone.
+window.sceneApi = {
+  stage, unit, pxPerM, say,
+  get room() { return room; },
+  kid, mom,
+  /** Walk the kid to a floor point (round the dog, or over him when running); resolves on arrival. */
+  walkTo(p, run = false) {
+    const [x0, y0, x1, y1] = room.walk, to = [Math.max(x0, Math.min(x1, p[0])), Math.max(y0, Math.min(y1, p[1]))];
+    // Already there, sitting on the couch: he stays put.
+    if (kid.couch && Math.hypot(to[0] - kid.x, to[1] - kid.y) < 30) { kid.arrive?.(); kid.arrive = null; return Promise.resolve(); }
+    target = { run }; kid.path = plan([kid.x, kid.y], outside(to), run);
+    return new Promise((resolve) => { if (kid.arrive) kid.arrive(); kid.arrive = resolve; });
+  },
+  /** Mom's gesture; the game's captions carry her words. */
+  gesture: (act) => gesture(act, false),
+  /** The dog leaps up and drags the kid out the front door; resolves once the picture has faded out. */
+  dragOut,
+  /** The picture's fade: `to` 1 is black. Over `ms`. */
+  fade(to, ms = 0) {
+    fade.style.transition = ms ? `opacity ${ms}ms ease-in-out` : 'none';
+    fade.style.opacity = to;
+  },
+  /** Mom's in the kitchen (out of the picture), or comes in: appears at `from`, walks to `to`; resolves when she's there. */
+  momAway() { mom.away = true; mom.target = null; endSneeze(); },
+  /** Mom stays where she is (while you're talking to her), or goes back to wandering. */
+  momHold(hold) { mom.hold = hold; },
+  /** Mom's mood: cross (she's lost patience) or friendly. */
+  momCross(cross) { mom.cross = cross; },
+  /** Mom holds out the milk money (true), or hasn't got it any more. */
+  momMoney(on) { mom.money = on; },
+  /** Mom walks over to the kid and hands him the money; resolves once he has it. */
+  momHandOver() {
+    const m = pxPerM(kid.y), to = [kid.x + 0.8 * m, Math.min(room.walk[3], kid.y + 18)];
+    mom.money = true; momAct?.done?.(); momAct = null; endSneeze();
+    return new Promise((resolve) => {
+      Object.assign(mom, { target: to, walkT: 0, arrive: () => { gesture('give'); setTimeout(() => { mom.money = false; resolve(); }, 900); } });
+    });
+  },
+  momEnter(from, to) {
+    Object.assign(mom, { away: false, x: from[0], y: from[1], target: to, walkT: 0 });
+    nextSneeze = Math.max(nextSneeze, t + 8);
+    return new Promise((resolve) => { mom.arrive = resolve; });
+  },
+  /** What's on the kid's feet: socks (true), or his slippers. */
+  socks(on) { kid.socks = on; },
+  /** Mom sneezes, now (once she's stopped walking); resolves when it's over. */
+  sneeze() { momAct?.done?.(); momAct = null; endSneeze(); return new Promise((resolve) => { momSneeze = { t: 0, heard: false, done: resolve }; }); },
+  /** Up off the couch (the getting-up frame, then standing in front of it). */
+  standUp() { if (kid.couch && kid.couch.up < 0) kid.couch.up = t; },
+  /** Back on the couch, reading, until he's sent somewhere again. */
+  sit() { kid.path = []; [kid.x, kid.y] = room.couch ?? [kid.x, kid.y]; if (room.couch) kid.couch = { up: -1 }; },
+  /** Which of the room's things are there (by hotspot id; see THINGS_C). */
+  /** The shoelace off the floor (you've followed it into the pile and dug your running shoes out). */
+  lace(on) { if (!on && $('lace').value !== '') { $('lace').value = ''; showLace(); } },
+  things(ids) { const want = Object.entries(room.things ?? {}).filter(([id, th]) => thingShows(id, th, ids)).map(([id]) => id).join(); if (want !== thingsShown.map((th) => th.id).join()) showThings(ids); },
+  /** Mom walks over to the side table and takes a Claritin: the bottle's in her hand, then back on the table. */
+  momPill() {
+    const [id, th] = Object.entries(room.things ?? {}).find(([, th]) => th.usedBy === 'pill') ?? [];
+    const held = (on) => { if (!id) return; if (on) thingsHeld.add(id); else thingsHeld.delete(id); showThings(thingsAsked); };
+    return new Promise((resolve) => {
+      const take = () => {
+        gesture('pill', false); held(true);
+        momAct.done = () => { held(false); resolve(); };
+      };
+      if (!th || Math.hypot(mom.x - th.from[0], mom.y - th.from[1]) < 4) return take();
+      Object.assign(mom, { target: th.from, walkT: 0, arrive: take });
+    });
+  },
+  /** Full screen, on a phone or tablet (from a tap: Start). */
+  fullScreen,
+  /** The dog stirs (an ear, an eye, a roll). */
+  dogStirs: () => dogReacts(),
+  startAudio,
+  /** The frames, which the street's picture borrows (the dog asleep, the kid running and standing). */
+  manifest: MANIFEST,
+  /** Out of the living room for good: it stops (Mom sneezing out of sight was still heard on the street). */
+  leave() { goneFromRoom = true; momSneeze = null; },
+  /** A scene's own music ({ src, loopStart } in seconds), crossfaded in over `fadeSec`; null: the menu's pick again. */
+  // (The same track again: it plays on, not from the top.)
+  music(pick, fadeSec = 2) { if (pick && track && pick.src === track.src && (pick.startAt ?? 0) === (track.startAt ?? 0)) return; track = pick; startAudio(); playMusic(fadeSec); },
+  /** The music fades out to nothing (the epilogue), till a scene's music again. */
+  musicOut(fadeSec = 2) { track = { src: '', loopStart: 0 }; startAudio(); playMusic(fadeSec); },
+  /**
+   * A stinger (a ta-da, the storm breaking: music, so the music button mutes it), over the music. `gain` against the
+   * music's volume.
+   */
+  sting(src, gain = 1) {
+    startAudio();
+    if (!audio || muted || window.gamePaused) return;
+    const go = (buf) => {
+      const s = audio.createBufferSource(), g = audio.createGain(), vol = +$('musicVol').value;
+      s.buffer = buf; g.gain.value = Math.min(1, vol * 2 * gain);
+      // (Over the music, which carries on as it was: a playtest found it dipping "for no clear reason".)
+      s.connect(g).connect(master); s.start();
+    };
+    if (musicBufs[src]) return go(musicBufs[src]);
+    fetch(src).then((r) => r.arrayBuffer()).then((b) => audio.decodeAudioData(b)).then((buf) => { musicBufs[src] = buf; go(buf); }).catch(() => {});
+  },
+  /** The stingers fetched ahead, so each lands on its moment. */
+  stingsLoad(srcs) {
+    if (!audio) return;
+    for (const src of srcs) if (!musicBufs[src] && !stingsLoading.has(src) && stingsLoading.add(src)) fetch(src).then((r) => r.arrayBuffer()).then((b) => audio.decodeAudioData(b)).then((buf) => { musicBufs[src] = buf; }).catch(() => {});
+  },
+};
+</script>
+</body>
+</html>
